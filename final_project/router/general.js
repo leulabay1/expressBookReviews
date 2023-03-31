@@ -39,13 +39,11 @@ public_users.get('/', async (req, res) => {
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',async (req, res) => {
   const isbn = req.params.isbn;
-  let list_of_books;
+  let filtered_book;
   await BooksPromise.then((data)=>{
-      list_of_books = data
+      filtered_book = data[isbn]
   })
-  console.log(list_of_books)
-  filterd_book = list_of_books[isbn]
-  if(filterd_book){
+  if(filtered_book){
     return res.status(200).send(JSON.stringify(filterd_book,null,4));
 
   }
