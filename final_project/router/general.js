@@ -63,10 +63,19 @@ public_users.get('/author/:author',async (req, res) =>{
   await BooksPromise.then((data)=>{
     list_of_books = data
     })
-  const books_values = Object.values(list_of_books);
-  const filtered_book = books_values.filter(book=> book.author === author);
+  
+  const books_values = Object.entries(list_of_books);
+  result = []
+  books_values.forEach((book)=>{
+    book[1] = Object.assign({"isbn": book[0]}, book[1]);
+    result.push(book[1])
+  })
+  const filtered_book = result.filter(book=> book.author === author);
+  filtered_book.forEach((book)=>{
+    delete book["author"]
+  })
   if(filtered_book.length>0){
-    return res.status(200).send(JSON.stringify(filtered_book[0],null,4));
+    return res.status(200).send(JSON.stringify({"booksbyauthor":filtered_book},null,4));
   }
   else{
     return res.status(404).send(JSON.stringify({message: " book not found"}))
@@ -82,10 +91,18 @@ public_users.get('/title/:title',async (req, res) => {
   await BooksPromise.then((data)=>{
     list_of_books = data
   })
-  const books_values = Object.values(list_of_books);
-  const book_filter = books_values.filter(book=> book.title === title);
-  if(book_filter.length>0){
-    return res.status(200).send(JSON.stringify(book_filter[0],null,4));
+  const books_values = Object.entries(list_of_books);
+  result = []
+  books_values.forEach((book)=>{
+    book[1] = Object.assign({"isbn": book[0]}, book[1]);
+    result.push(book[1])
+  })
+  const filtered_book = result.filter(book=> book.title === title);
+  filtered_book.forEach((book)=>{
+    delete book["title"]
+  })
+  if(filtered_book.length>0){
+    return res.status(200).send(JSON.stringify({"bookbytitle": filtered_book},null,4));
   }
   else{
     return res.status(404).send(JSON.stringify({message: " book not found"}))
